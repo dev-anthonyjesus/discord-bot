@@ -69,8 +69,10 @@ class TicketsCog(commands.Cog):
         titulo: str,
         descricao: str,
         imagem: str = "",
-        nome_ticket: str = "Report Love",
-        descricao_ticket: str = "Abra um ticket.",
+        nome_ticket: str = "<:tell:1493022801362423931> Report Love",
+        descricao_ticket: str = ""Espaço para ajustes na nossa convivência. O diálogo é a nossa base. "
+    "Regras rápidas: Respeito acima de tudo. O que é dito aqui, morre aqui. "
+    "Se for urgente, priorize a call. Clique no botão abaixo para abrir um espaço de conversa."",
         imagem_ticket: str = "",
         icone: str = "💗",
         placeholder: str = "Escolha uma opção",
