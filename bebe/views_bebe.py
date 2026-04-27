@@ -484,5 +484,13 @@ class BabyAdminView(View):
 
 
 def registrar_views_bebe(bot, sistema):
+    """Registra todas as views persistentes do bebê no bot."""
+    if sistema is None:
+        raise ValueError("sistema não pode ser None em registrar_views_bebe()")
+    
+    # Registrar views com timeout=None (persistentes)
     bot.add_view(SetupBebeView(sistema))
     bot.add_view(PainelBebeView(sistema))
+    bot.add_view(BabyAdminView(sistema))
+    bot.add_view(AdicionaisBebeView(sistema))
+    bot.add_view(MomentosBebeView(sistema))

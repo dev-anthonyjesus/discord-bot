@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import logging
 from datetime import datetime, timezone
 
 import nextcord
@@ -11,10 +12,20 @@ NOIVA_ROLE_ID = 1491166441515257927
 DEFAULT_LOG_CHANNEL_ID = 1491930461750952108
 DEFAULT_REPORT_CHANNEL_ID = 1491172827527778304
 
+FIXED_PANEL_TITLE = "<:tell:1493022801362423931> Report Love"
+FIXED_PANEL_DESCRIPTION = (
+    "Espaço para ajustes na nossa convivência. O diálogo é a nossa base. "
+    "Regras rápidas: Respeito acima de tudo. O que é dito aqui, morre aqui. "
+    "Se for urgente, priorize a call. Clique no botão abaixo para abrir um espaço de conversa."
+)
+FIXED_TICKET_ICON = "<:tell:1493022801362423931>"
+FIXED_SELECT_PLACEHOLDER = "Escolha uma opção"
+
 CONFIG_FILE = "ticket_config.json"
 STATE_FILE = "ticket_state.json"
 
 _ticket_bot = None
+log = logging.getLogger(__name__)
 
 
 def setup_ticket_system(bot):
@@ -49,19 +60,26 @@ def load_config() -> dict:
         "panel_channel_id": DEFAULT_REPORT_CHANNEL_ID,
         "manager_role_id": None,
         "log_channel_id": DEFAULT_LOG_CHANNEL_ID,
-        "panel_title": "Central de Tickets",
-        "panel_description": "Abra um atendimento pelo seletor abaixo.",
+        "panel_title": FIXED_PANEL_TITLE,
+        "panel_description": FIXED_PANEL_DESCRIPTION,
         "panel_image_url": "",
         "ticket_name": "Report Love",
         "ticket_description": "Abra um ticket para conversar com seu parceiro.",
         "ticket_image_url": "",
-        "ticket_icon": "💗",
-        "select_placeholder": "Escolha uma opção",
+        "ticket_icon": FIXED_TICKET_ICON,
+        "select_placeholder": FIXED_SELECT_PLACEHOLDER,
     }
     cfg = load_json(CONFIG_FILE, default)
 
     for key, value in default.items():
         cfg.setdefault(key, value)
+
+    # Mantém o texto e aparência do painel exatamente no padrão solicitado.
+    cfg["panel_title"] = FIXED_PANEL_TITLE
+    cfg["panel_description"] = FIXED_PANEL_DESCRIPTION
+    cfg["ticket_name"] = "Report Love"
+    cfg["ticket_icon"] = FIXED_TICKET_ICON
+    cfg["select_placeholder"] = FIXED_SELECT_PLACEHOLDER
 
     save_json(CONFIG_FILE, cfg)
     return cfg
@@ -118,7 +136,21 @@ def get_opposite_role_id(member: nextcord.Member) -> int | None:
 
 
 def format_custom_emoji(raw: str):
-    return raw if raw else "🎫"
+    if not raw:
+        return "🎫"
+
+    if raw.startswith("<") and raw.endswith(">"):
+        return raw
+
+    if raw.startswith(":") and raw.endswith(":"):
+        emoji_name = raw.strip(":")
+        guild = get_guild()
+        if guild is not None:
+            emoji = nextcord.utils.get(guild.emojis, name=emoji_name)
+            if emoji is not None:
+                return emoji
+
+    return raw
 
 
 def build_panel_embed(cfg: dict) -> nextcord.Embed:
@@ -297,29 +329,39 @@ class TicketSelect(nextcord.ui.Select):
         )
 
     async def callback(self, interaction: nextcord.Interaction) -> None:
+        async def _reply(content: str) -> None:
+            try:
+                if interaction.response.is_done():
+                    await interaction.followup.send(content, ephemeral=True)
+                else:
+                    await interaction.response.send_message(content, ephemeral=True)
+            except nextcord.errors.NotFound:
+                # Interaction token expired; avoid bubbling noisy traceback.
+                log.warning("Interação de ticket expirou antes da resposta ao usuário.")
+
+        # Acknowledge immediately to avoid 10062 (Unknown interaction)
+        # when thread creation or network calls take longer than 3 seconds.
+        if not interaction.response.is_done():
+            try:
+                await interaction.response.defer(ephemeral=True)
+            except nextcord.errors.NotFound:
+                log.warning("Interação de ticket já expirou ao tentar defer.")
+
         cfg = load_config()
         guild = interaction.guild
 
         if guild is None:
-            await interaction.response.send_message(
-                "Servidor não encontrado.", ephemeral=True
-            )
+            await _reply("Servidor não encontrado.")
             return
 
         parent = guild.get_channel(cfg["panel_channel_id"])
         if not isinstance(parent, nextcord.TextChannel):
-            await interaction.response.send_message(
-                "O canal configurado precisa ser um canal de texto.",
-                ephemeral=True,
-            )
+            await _reply("O canal configurado precisa ser um canal de texto.")
             return
 
         opener = interaction.user
         if not isinstance(opener, nextcord.Member):
-            await interaction.response.send_message(
-                "Não consegui identificar seu membro.",
-                ephemeral=True,
-            )
+            await _reply("Não consegui identificar seu membro.")
             return
 
         thread_name = f"ticket-{opener.display_name}".lower().replace(" ", "-")[:90]
@@ -367,10 +409,7 @@ class TicketSelect(nextcord.ui.Select):
             content=f"[TICKET ABERTO] {opener} abriu {thread.mention} em {utcnow().strftime('%d/%m/%Y %H:%M:%S UTC')}",
         )
 
-        await interaction.response.send_message(
-            f"Seu ticket foi criado: {thread.mention}",
-            ephemeral=True,
-        )
+        await _reply(f"Seu ticket foi criado: {thread.mention}")
 
 
 class TicketPanelView(nextcord.ui.View):

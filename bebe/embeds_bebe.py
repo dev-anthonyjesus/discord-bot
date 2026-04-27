@@ -85,7 +85,7 @@ def embed_setup_bebe(data: dict) -> nextcord.Embed:
 def embed_principal_bebe(data: dict) -> nextcord.Embed:
     tracos = data.get("tracos", [])
     tracos_txt = ", ".join(t.title() for t in tracos) if tracos else "Não definidos"
-    satisfacao = data.get("satisfacao_geral", 0)  
+    satisfacao = data.get("satisfacao_geral", 0)
 
     cuidados_dia = data.get("cuidados_dia", 0)
     ultimo_cuidado = data.get("ultimo_cuidado") or "Nenhum"
@@ -103,22 +103,22 @@ def embed_principal_bebe(data: dict) -> nextcord.Embed:
     for chave in ["fome", "fralda", "sono", "atencao", "higiene", "humor"]:
         valor = data.get(chave, 50)
 
-    # nessas necessidades, o número interno maior = pior
-    # então a barra visual precisa ser invertida
-    if chave in ["fome", "fralda", "sono", "atencao", "higiene"]:
-        valor_barra = 100 - valor
-    else:
-        valor_barra = valor  # humor continua normal
+        # nessas necessidades, o número interno maior = pior
+        # então a barra visual precisa ser invertida
+        if chave in ["fome", "fralda", "sono", "atencao", "higiene"]:
+            valor_barra = 100 - valor
+        else:
+            valor_barra = valor  # humor continua normal
 
-    # se estiver dormindo, mostra a barra de sono cheia
-    if chave == "sono" and data.get("estado") == "dormindo":
-        valor_barra = 100
+        # se estiver dormindo, mostra a barra de sono cheia
+        if chave == "sono" and data.get("estado") == "dormindo":
+            valor_barra = 100
 
-    embed.add_field(
-        name=f"{EMOJI_STATUS[chave]} {chave.title()}",
-        value=barra(valor_barra),
-        inline=True
-    )
+        embed.add_field(
+            name=f"{EMOJI_STATUS[chave]} {chave.title()}",
+            value=barra(valor_barra),
+            inline=True
+        )
 
     embed.add_field(
         name="🧍 Disposição",
@@ -206,7 +206,10 @@ def embed_adicionais_bebe() -> nextcord.Embed:
     )
     
 
-def embed_memoria_bebe(titulo: str, descricao: str) -> nextcord.Embed:
+def embed_memoria_bebe(
+    titulo: str = "📸 Momentos do bebê",
+    descricao: str = "Escolha uma foto para enviar um momento.",
+) -> nextcord.Embed:
     return nextcord.Embed(
         title=titulo,
         description=descricao,
