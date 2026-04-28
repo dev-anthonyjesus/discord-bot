@@ -22,6 +22,8 @@ def load_panels() -> dict:
 
 
 def save_panels(data: dict) -> None:
+    os.makedirs(os.path.dirname(PANEL_FILE), exist_ok=True)
+
     with open(PANEL_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
