@@ -31,6 +31,15 @@ from sistema_fazenda.services import (
 from sistema_fazenda.funcionarios.embeds import criar_embed_funcionarios
 from sistema_fazenda.funcionarios.views import FuncionariosView
 
+
+from sistema_fazenda.animais.embeds import criar_embed_resumo_fazenda
+from sistema_fazenda.animais.views import EntregaRacaoView, IrParaAnimaisView
+
+from sistema_fazenda.animais.embeds import (
+    criar_embed_resumo_fazenda,
+    criar_embed_entrega_racao,
+)
+
 async def resposta_temporaria(
     interaction: nextcord.Interaction,
     embed: nextcord.Embed,
@@ -701,12 +710,12 @@ class FarmhouseView(View):
         label="Fazenda",
         style=nextcord.ButtonStyle.green,
         emoji=PE("farmhouse"),
-        custom_id="farmhouse_funcionarios",
+        custom_id="farmhouse_gestao",
     )
-    async def funcionarios_btn(self, button: Button, interaction: nextcord.Interaction):
+    async def fazenda_btn(self, button: Button, interaction: nextcord.Interaction):
         await interaction.response.send_message(
-            embed=criar_embed_funcionarios(),
-            view=FuncionariosView(),
+            embed=criar_embed_resumo_fazenda(),
+            view=FazendaGestaoView(interaction.user),
             ephemeral=True,
         )
 
@@ -804,3 +813,47 @@ class PrefeituraView(View):
             await interaction.delete_original_message()
         except Exception:
             pass
+
+
+class FazendaGestaoView(View):
+    def __init__(self, user: nextcord.Member):
+        super().__init__(timeout=60)
+        self.user = user
+
+    @nextcord.ui.button(
+        label="Contratar funcionário",
+        style=nextcord.ButtonStyle.green,
+        emoji="🤝",
+    )
+    async def contratar_funcionario(
+        self, button: Button, interaction: nextcord.Interaction
+    ):
+        await interaction.response.send_message(
+            embed=criar_embed_funcionarios(),
+            view=FuncionariosView(),
+            ephemeral=True,
+        )
+
+    @nextcord.ui.button(
+        label="Pedir entrega de ração",
+        style=nextcord.ButtonStyle.blurple,
+        emoji="🚚",
+    )
+    async def pedir_racao(self, button: Button, interaction: nextcord.Interaction):
+        await interaction.response.send_message(
+            embed=criar_embed_entrega_racao(),
+            view=EntregaRacaoView(),
+            ephemeral=True,
+        )
+
+    @nextcord.ui.button(
+        label="Ir para animais",
+        style=nextcord.ButtonStyle.gray,
+        emoji="🐾",
+    )
+    async def ir_animais(self, button: Button, interaction: nextcord.Interaction):
+        await interaction.response.send_message(
+            "Escolha o espaço dos animais:",
+            view=IrParaAnimaisView(),
+            ephemeral=True,
+        )

@@ -1,7 +1,13 @@
 import nextcord
 
 
+from sistema_fazenda.animais.services import (
+    resumo_animais_para_embed,
+    resumo_racao_para_embed,
+)
 from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
+
+
 from sistema_fazenda.config import CULTIVOS, ESTACOES, NOME_FAZENDA, SLOTS_POR_CANTEIRO
 from sistema_fazenda.db import get_state
 from sistema_fazenda.emojis import E
@@ -11,7 +17,6 @@ from sistema_fazenda.services import (
     slot_pronto,
 )
 
-from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
 
 CARGO_BRACO_DIREITO_ID = 1499469992264204298
 CARGO_SECRETARIA_ID = 1499470168747806750
@@ -144,6 +149,19 @@ def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed
     for lote in data["lotes"]:
         lotes_txt.append(f"**Lote {lote['id']}** — {resumo_lote(lote)}")
 
+
+
+    embed.add_field(
+        name=f"{E('info')} Aliados da Fazenda",
+        value=(
+            f"<@&{CARGO_BRACO_DIREITO_ID}>:\n"
+            f"{listar_membros_do_cargo(guild, CARGO_BRACO_DIREITO_ID)}\n\n"
+            f"<@&{CARGO_SECRETARIA_ID}>:\n"
+            f"{listar_membros_do_cargo(guild, CARGO_SECRETARIA_ID)}"
+        ),
+        inline=False,
+    )
+
     embed.add_field(
         name=f"{E('lote')} Lotes",
         value="\n".join(lotes_txt),
@@ -170,14 +188,15 @@ def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed
     )
 
     embed.add_field(
-        name=f"{E('info')} Aliados da Fazenda",
-        value=(
-            f"<@&{CARGO_BRACO_DIREITO_ID}>:\n"
-            f"{listar_membros_do_cargo(guild, CARGO_BRACO_DIREITO_ID)}\n\n"
-            f"<@&{CARGO_SECRETARIA_ID}>:\n"
-            f"{listar_membros_do_cargo(guild, CARGO_SECRETARIA_ID)}"
-        ),
-        inline=False,
+    name="Animais",
+    value=resumo_animais_para_embed(data),
+    inline=False,
+    )
+
+    embed.add_field(
+    name="Ração",
+    value=resumo_racao_para_embed(data),
+    inline=False,
     )
 
     embed.set_footer(text="Farmhouse • plantação v1")

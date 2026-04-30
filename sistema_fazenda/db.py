@@ -63,6 +63,24 @@ def bloco_funcionarios_inicial() -> dict:
     }
 
 
+def bloco_animais_inicial() -> dict:
+    return {
+        "racao": 50,
+        "produtos": {},
+        "galinha": [],
+        "vaca": [],
+        "ovelha": [],
+        "cabra": [],
+        "cavalo": [],
+        "estatisticas": {
+            "animais_comprados": 0,
+            "produtos_coletados": 0,
+            "nascimentos": 0,
+            "carne_vendida": 0,
+        },
+    }
+
+
 def estado_inicial() -> dict:
     return {
         "moedas": MOEDAS_INICIAIS,
@@ -74,7 +92,7 @@ def estado_inicial() -> dict:
         "sementes": SEMENTES_INICIAIS.copy(),
         "celeiro": {},
         "processados": {},
-        "animais": {},
+        "animais":  bloco_animais_inicial(),
         "funcionarios": bloco_funcionarios_inicial(),
         "estatisticas": {
             "plantios": 0,
@@ -98,7 +116,21 @@ def garantir_chaves(data: dict) -> dict:
     data.setdefault("sementes", SEMENTES_INICIAIS.copy())
     data.setdefault("celeiro", {})
     data.setdefault("processados", {})
-    data.setdefault("animais", {})
+    if not isinstance(data.get("animais"), dict) or "racao" not in data.get("animais", {}):
+       data["animais"] = bloco_animais_inicial()
+
+    data["animais"].setdefault("racao", 50)
+    data["animais"].setdefault("produtos", {})
+    data["animais"].setdefault("galinha", [])
+    data["animais"].setdefault("vaca", [])
+    data["animais"].setdefault("ovelha", [])
+    data["animais"].setdefault("cabra", [])
+    data["animais"].setdefault("cavalo", [])
+    data["animais"].setdefault("estatisticas", {})
+    data["animais"]["estatisticas"].setdefault("animais_comprados", 0)
+    data["animais"]["estatisticas"].setdefault("produtos_coletados", 0)
+    data["animais"]["estatisticas"].setdefault("nascimentos", 0)
+    data["animais"]["estatisticas"].setdefault("carne_vendida", 0)
     data.setdefault("estatisticas", {})
     data.setdefault("funcionarios", bloco_funcionarios_inicial())
 
