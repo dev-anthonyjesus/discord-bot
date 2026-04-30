@@ -1,0 +1,551 @@
+{
+    "moedas": 100,
+    "energia": 79,
+    "energia_maxima": 100,
+    "estacao": "outono",
+    "dia": 1,
+    "lotes": [
+        {
+            "id": 1,
+            "desbloqueado": true,
+            "nivel": 1,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "desbloqueado": false,
+            "nivel": 0,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "desbloqueado": false,
+            "nivel": 0,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "desbloqueado": false,
+            "nivel": 0,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "desbloqueado": false,
+            "nivel": 0,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "desbloqueado": false,
+            "nivel": 0,
+            "canteiros": [
+                {
+                    "id": 1,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "slots": [
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        },
+                        {
+                            "cultivo": null,
+                            "plantado_em": null,
+                            "regado": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "sementes": {
+        "milho": 0,
+        "feijao": 3,
+        "cafe": 3,
+        "mandioca": 3
+    },
+    "celeiro": {
+        "milho": 6
+    },
+    "estatisticas": {
+        "plantios": 3,
+        "colheitas": 3,
+        "vendas": 0,
+        "moedas_ganhas": 0,
+        "moedas_gastas": 0
+    },
+    "criado_em": "2026-04-30T14:38:10",
+    "atualizado_em": "2026-04-30T15:38:06",
+    "processados": {},
+    "animais": {}
+}

@@ -4,6 +4,8 @@ __pycache__/
 database.json
 bebe_virtual.json
 panel_messages.json
-ticket_config.json
+json/ticket_config.json
+json/ticket_state.json
+json/lembretes.json
 ticket_state.json
 casamento_compatibilidade.json

@@ -20,20 +20,22 @@ CARGO_NOIVO_ID = 1491166369859764314
 CARGO_NOIVA_ID = 1491166441515257927
 
 FOOTER_ICON_URL = (
-    "https://i.pinimg.com/736x/4d/b7/f8/" "4db7f8881653225e19760f86e1f0c0c0.jpg"
+    "https://i.pinimg.com/736x/db/81/6c/" "db816cfd09fced7a3fb21a97b4601cf6.jpg"
 )
 
 
 # ─────────────────────────────────────────────────────────────
 # Emojis
 # ─────────────────────────────────────────────────────────────
-# Para evitar aparecer ID quebrado na embed, deixei emojis normais.
-# Depois, se você quiser, a gente troca por emoji customizado no formato correto:
-# <:nome_do_emoji:ID_DO_EMOJI>
 
 EMOJI_BELLHOP = "🔔"
 EMOJI_LULI = "💖"
 EMOJI_AV = "✨"
+
+
+# ─────────────────────────────────────────────────────────────
+# Embed
+# ─────────────────────────────────────────────────────────────
 
 
 def create_welcome_embed() -> nextcord.Embed:
@@ -48,7 +50,8 @@ def create_welcome_embed() -> nextcord.Embed:
             f'_"Olá {visitante}, este **lar** é o reflexo da nossa união '
             "e de cada passo que demos juntos. É uma alegria imensa receber você "
             "aqui para celebrar o início deste novo capítulo. Entre e sinta-se "
-            f'parte da nossa família!"_ {EMOJI_LULI} {EMOJI_AV}'
+            f'parte da nossa família!"_ {EMOJI_LULI} {EMOJI_AV}\n\n'
+            f"**Mensagem enviada pelo casal:** {noivo} {noiva}"
         ),
         color=0xFF69B4,
         timestamp=nextcord.utils.utcnow(),
@@ -61,11 +64,16 @@ def create_welcome_embed() -> nextcord.Embed:
     )
 
     embed.set_footer(
-        text=f"Mensagem enviada pelo casal {noivo} {noiva}",
+        text="Mensagem enviada pelo casal",
         icon_url=FOOTER_ICON_URL,
     )
 
     return embed
+
+
+# ─────────────────────────────────────────────────────────────
+# Cog
+# ─────────────────────────────────────────────────────────────
 
 
 class BoasVindasCog(commands.Cog):

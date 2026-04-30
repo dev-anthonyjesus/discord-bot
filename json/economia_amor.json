@@ -1,0 +1,24 @@
+{
+    "1431111401522462741": {
+        "mimos": 0,
+        "moedas": 35,
+        "daily": 1777417365.9141843,
+        "vip": null,
+        "vip_comprado_em": 0,
+        "vip_expira": 0,
+        "protegido": false,
+        "protegido_comprado_em": 0,
+        "protegido_expira": 0
+    },
+    "715329753032163379": {
+        "mimos": 0,
+        "moedas": 100,
+        "daily": 0,
+        "vip": null,
+        "vip_comprado_em": 0,
+        "vip_expira": 0,
+        "protegido": false,
+        "protegido_comprado_em": 0,
+        "protegido_expira": 0
+    }
+}

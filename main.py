@@ -1,5 +1,9 @@
 import asyncio
 import logging
+logging.getLogger("nextcord.gateway").setLevel(logging.WARNING)
+logging.getLogger("nextcord.http").setLevel(logging.WARNING)
+logging.getLogger("nextcord.client").setLevel(logging.WARNING)
+logging.getLogger("nextcord.state").setLevel(logging.WARNING)
 import os
 import sys
 import traceback
@@ -76,6 +80,9 @@ EXTENSIONS = [
     "cogs.gif_comprimir_fig",
     "cogs.shop",
     "cogs.tickets",
+    "cogs.lembretes",
+    "cogs.bebe",
+    "cogs.fazenda",
 ]
 
 
