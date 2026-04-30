@@ -531,6 +531,15 @@ class VoltarFazendaView(View):
     def __init__(self):
         super().__init__(timeout=None)
 
+        self.add_item(
+            nextcord.ui.Button(
+                label="Abrir Farmhouse",
+                style=nextcord.ButtonStyle.link,
+                emoji=PE("farmhouse"),
+                url="https://discord.com/channels/1491166103383179484/1499393422522581104",
+            )
+        )
+
     @nextcord.ui.button(
         label="Relatório",
         style=nextcord.ButtonStyle.blurple,
@@ -598,16 +607,6 @@ class IrParaSelect(Select):
                 emoji=PE("vender"),
             ),
         ]
-
-        for i in range(2, 7):
-            options.append(
-                nextcord.SelectOption(
-                    label=f"Lote {i}",
-                    value=f"lote_{i}",
-                    description="Lote bloqueado por enquanto",
-                    emoji=PE("bloqueado"),
-                )
-            )
 
         super().__init__(
             placeholder="Escolha para onde ir",
@@ -709,7 +708,15 @@ class FarmhouseView(View):
             embed=criar_embed_funcionarios(),
             view=FuncionariosView(),
             ephemeral=True,
-    )
+        )
+
+        await asyncio.sleep(30)
+
+        try:
+            await interaction.delete_original_message()
+        except Exception:
+            pass
+
 
     @nextcord.ui.button(
         label="Ir para",

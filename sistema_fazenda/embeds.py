@@ -1,5 +1,7 @@
 import nextcord
 
+
+from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
 from sistema_fazenda.config import CULTIVOS, ESTACOES, NOME_FAZENDA, SLOTS_POR_CANTEIRO
 from sistema_fazenda.db import get_state
 from sistema_fazenda.emojis import E
@@ -8,6 +10,8 @@ from sistema_fazenda.services import (
     formatar_tempo,
     slot_pronto,
 )
+
+from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
 
 CARGO_BRACO_DIREITO_ID = 1499469992264204298
 CARGO_SECRETARIA_ID = 1499470168747806750
