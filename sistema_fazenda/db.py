@@ -55,6 +55,14 @@ def criar_lotes() -> list[dict]:
     return lotes
 
 
+def bloco_funcionarios_inicial() -> dict:
+    return {
+        "ativos": [],
+        "historico": [],
+        "limite": 4,
+    }
+
+
 def estado_inicial() -> dict:
     return {
         "moedas": MOEDAS_INICIAIS,
@@ -65,6 +73,9 @@ def estado_inicial() -> dict:
         "lotes": criar_lotes(),
         "sementes": SEMENTES_INICIAIS.copy(),
         "celeiro": {},
+        "processados": {},
+        "animais": {},
+        "funcionarios": bloco_funcionarios_inicial(),
         "estatisticas": {
             "plantios": 0,
             "colheitas": 0,
@@ -75,6 +86,33 @@ def estado_inicial() -> dict:
         "criado_em": datetime.now().isoformat(timespec="seconds"),
         "atualizado_em": datetime.now().isoformat(timespec="seconds"),
     }
+
+
+def garantir_chaves(data: dict) -> dict:
+    data.setdefault("moedas", MOEDAS_INICIAIS)
+    data.setdefault("energia", ENERGIA_INICIAL)
+    data.setdefault("energia_maxima", ENERGIA_MAXIMA)
+    data.setdefault("estacao", ESTACAO_INICIAL)
+    data.setdefault("dia", 1)
+    data.setdefault("lotes", criar_lotes())
+    data.setdefault("sementes", SEMENTES_INICIAIS.copy())
+    data.setdefault("celeiro", {})
+    data.setdefault("processados", {})
+    data.setdefault("animais", {})
+    data.setdefault("estatisticas", {})
+    data.setdefault("funcionarios", bloco_funcionarios_inicial())
+
+    data["estatisticas"].setdefault("plantios", 0)
+    data["estatisticas"].setdefault("colheitas", 0)
+    data["estatisticas"].setdefault("vendas", 0)
+    data["estatisticas"].setdefault("moedas_ganhas", 0)
+    data["estatisticas"].setdefault("moedas_gastas", 0)
+
+    data["funcionarios"].setdefault("ativos", [])
+    data["funcionarios"].setdefault("historico", [])
+    data["funcionarios"].setdefault("limite", 4)
+
+    return data
 
 
 def load_db() -> dict:
@@ -93,23 +131,7 @@ def load_db() -> dict:
     except Exception:
         data = estado_inicial()
 
-    data.setdefault("moedas", MOEDAS_INICIAIS)
-    data.setdefault("energia", ENERGIA_INICIAL)
-    data.setdefault("energia_maxima", ENERGIA_MAXIMA)
-    data.setdefault("estacao", ESTACAO_INICIAL)
-    data.setdefault("dia", 1)
-    data.setdefault("lotes", criar_lotes())
-    data.setdefault("sementes", SEMENTES_INICIAIS.copy())
-    data.setdefault("celeiro", {})
-    data.setdefault("estatisticas", {})
-    data.setdefault("processados", {})
-    data.setdefault("animais", {})
-
-    data["estatisticas"].setdefault("plantios", 0)
-    data["estatisticas"].setdefault("colheitas", 0)
-    data["estatisticas"].setdefault("vendas", 0)
-    data["estatisticas"].setdefault("moedas_ganhas", 0)
-    data["estatisticas"].setdefault("moedas_gastas", 0)
+    data = garantir_chaves(data)
 
     save_db(data)
     return data

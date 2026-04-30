@@ -545,7 +545,12 @@
         "moedas_gastas": 0
     },
     "criado_em": "2026-04-30T14:38:10",
-    "atualizado_em": "2026-04-30T15:38:06",
+    "atualizado_em": "2026-04-30T16:43:39",
     "processados": {},
-    "animais": {}
+    "animais": {},
+    "funcionarios": {
+        "ativos": [],
+        "historico": [],
+        "limite": 4
+    }
 }

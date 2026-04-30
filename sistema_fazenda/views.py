@@ -28,6 +28,8 @@ from sistema_fazenda.services import (
     confirmar_venda_fornecedor,
 )
 
+from sistema_fazenda.funcionarios.embeds import criar_embed_funcionarios
+from sistema_fazenda.funcionarios.views import FuncionariosView
 
 async def resposta_temporaria(
     interaction: nextcord.Interaction,
@@ -694,6 +696,20 @@ class FarmhouseView(View):
                 url="https://discord.com/channels/1491166103383179484/1499393648997961738",
             )
         )
+        
+        
+    @nextcord.ui.button(
+        label="Fazenda",
+        style=nextcord.ButtonStyle.green,
+        emoji=PE("farmhouse"),
+        custom_id="farmhouse_funcionarios",
+    )
+    async def funcionarios_btn(self, button: Button, interaction: nextcord.Interaction):
+        await interaction.response.send_message(
+            embed=criar_embed_funcionarios(),
+            view=FuncionariosView(),
+            ephemeral=True,
+    )
 
     @nextcord.ui.button(
         label="Ir para",

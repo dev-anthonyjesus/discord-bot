@@ -156,6 +156,13 @@ def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed
         name=f"{E('celeiro')} Celeiro",
         value=formatar_lista_itens(data.get("celeiro", {})),
         inline=True,
+        
+    )
+
+    embed.add_field(
+        name="Funcionários da Fazenda",
+        value=resumo_funcionarios_para_embed(data),
+        inline=True,
     )
 
     embed.add_field(
