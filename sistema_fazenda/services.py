@@ -275,3 +275,16 @@ def confirmar_venda_fornecedor(cultivo_id: str) -> tuple[bool, str]:
         True,
         f"💰 Venda confirmada: {quantidade}x {nome}. Entraram {liquido} moedas rurais. Taxa do fornecedor: {taxa}.",
     )
+
+
+def marcar_animais_prontos() -> dict:
+    data = get_state()
+    data = garantir_bloco_animais(data)
+
+    for animal_id in ANIMAIS:
+        for animal in data["animais"].get(animal_id, []):
+            animal["ultimo_produto"] = 0
+            animal["ultima_procriacao"] = 0
+
+    salvar_state(data)
+    return data

@@ -24,6 +24,8 @@ from sistema_fazenda.views import (
 )
 from utils.panels import send_or_update_panel
 
+from sistema_fazenda.animais.services import marcar_animais_prontos
+
 log = logging.getLogger(__name__)
 
 
@@ -165,6 +167,20 @@ class FazendaCog(commands.Cog):
             "✅ Todas as plantações foram marcadas como prontas para colher.",
             ephemeral=True,
         )
+    @nextcord.slash_command(
+    name="prontotudo",
+    description="Deixa plantações e animais prontos para teste",
+)
+    async def prontotudo(self, interaction: nextcord.Interaction):
+        marcar_tudo_pronto()
+        marcar_animais_prontos()
+
+        await atualizar_painel_farmhouse(self.bot)
+
+        await interaction.response.send_message(
+        "✅ Tudo foi marcado como pronto para teste: plantações e animais.",
+        ephemeral=True,
+    )
 
 
 def setup(bot: commands.Bot):
