@@ -290,3 +290,16 @@ def calcular_status_local(local: str) -> dict:
         )
 
     return resultado
+
+
+def marcar_animais_prontos() -> dict:
+    data = get_state()
+    data = garantir_bloco_animais(data)
+
+    for animal_id in ANIMAIS:
+        for animal in data["animais"].get(animal_id, []):
+            animal["ultimo_produto"] = 0
+            animal["ultima_procriacao"] = 0
+
+    salvar_state(data)
+    return data

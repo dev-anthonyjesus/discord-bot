@@ -598,10 +598,29 @@ class IrParaSelect(Select):
                 emoji=PE("lote"),
             ),
             nextcord.SelectOption(
-                label="Celeiro",
-                value="celeiro",
+                label="Estoque",
+                value="estoque",
                 description="Ver estoque da fazenda",
                 emoji=PE("celeiro"),
+            ),
+            nextcord.SelectOption(
+                label="Galinheiro",
+                value="animais_galinheiro",
+                description="Ver galinhas e ovos",
+                emoji="🐔",
+            ),
+            nextcord.SelectOption(
+                label="Celeiro dos animais",
+                value="animais_celeiro",
+                description="Ver vacas, cabras e ovelhas",
+                emoji="🐄",
+            ),
+            nextcord.SelectOption(
+                label="Estábulo",
+                value="animais_estabulo",
+                description="Ver cavalos",
+                emoji="🐎",
+
             ),
             nextcord.SelectOption(
                 label="Fornecedor",
@@ -632,10 +651,31 @@ class IrParaSelect(Select):
             nome = f"lote-{lote_id}"
             embed = criar_embed_lote(lote_id)
             view = LoteView(lote_id)
-        elif destino == "celeiro":
+        elif destino == "estoque":
             nome = "estoque"
             embed = criar_embed_estoque()
             view = VoltarFazendaView()
+            
+            
+        elif destino.startswith("animais_"):
+            from sistema_fazenda.animais.embeds import criar_embed_local_animais
+            from sistema_fazenda.animais.views import LocalAnimaisView, apagar_depois
+
+            local = destino.replace("animais_", "")
+
+            msg = await interaction.channel.send(
+                 embed=criar_embed_local_animais(local),
+                 view=LocalAnimaisView(local),
+            )
+
+            await interaction.response.send_message(
+                 "✅ Área dos animais aberta no canal. Ela some em 60s.",
+                 ephemeral=True,
+            )
+
+            asyncio.create_task(apagar_depois(msg, 60))
+            return
+
         elif destino == "fornecedor":
             nome = "fornecedor"
             embed = criar_embed_fornecedor()
