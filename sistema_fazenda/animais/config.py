@@ -75,3 +75,105 @@ RACAO_MAXIMA = 100
 RACAO_INICIAL = 50
 CUSTO_ENTREGA_RACAO = 60
 VALOR_ENTREGA_RACAO = 100
+
+
+ANIMAIS_COMPRAVEIS = {
+    "galinha": {
+        "quantidade_unidade": 1,
+        "quantidade_casal": 2,
+    },
+    "vaca": {
+        "quantidade_unidade": 1,
+        "quantidade_casal": 2,
+    },
+    "ovelha": {
+        "quantidade_unidade": 1,
+        "quantidade_casal": 2,
+    },
+    "cabra": {
+        "quantidade_unidade": 1,
+        "quantidade_casal": 2,
+    },
+}
+
+ABATE_ANIMAIS = {
+    "galinha": {
+        "produto": "carne_frango",
+        "nome": "Carne de frango",
+        "emoji": "🍗",
+        "kg": 2,
+        "valor_por_kg": 9,
+    },
+    "vaca": {
+        "produto": "carne_bovina",
+        "nome": "Carne bovina",
+        "emoji": "🥩",
+        "kg": 30,
+        "valor_por_kg": 3,
+    },
+    "ovelha": {
+        "produto": "carne_ovina",
+        "nome": "Carne ovina",
+        "emoji": "🥩",
+        "kg": 15,
+        "valor_por_kg": 4,
+    },
+    "cabra": {
+        "produto": "carne_caprina",
+        "nome": "Carne caprina",
+        "emoji": "🥩",
+        "kg": 14,
+        "valor_por_kg": 4,
+    },
+}
+
+PRODUTOS_ANIMAIS = {
+    "ovo": {
+        "nome": "Ovos",
+        "emoji": "🥚",
+        "unidade": "un",
+        "valor": 4,
+    },
+    "leite_vaca": {
+        "nome": "Leite de vaca",
+        "emoji": "🥛",
+        "unidade": "L",
+        "valor": 6,
+    },
+    "leite_cabra": {
+        "nome": "Leite de cabra",
+        "emoji": "🥛",
+        "unidade": "L",
+        "valor": 8,
+    },
+    "la": {
+        "nome": "Lã",
+        "emoji": "🧶",
+        "unidade": "un",
+        "valor": 10,
+    },
+    "carne_frango": {
+        "nome": "Carne de frango",
+        "emoji": "🍗",
+        "unidade": "kg",
+        "valor": 9,
+    },
+    "carne_bovina": {
+        "nome": "Carne bovina",
+        "emoji": "🥩",
+        "unidade": "kg",
+        "valor": 3,
+    },
+    "carne_ovina": {
+        "nome": "Carne ovina",
+        "emoji": "🥩",
+        "unidade": "kg",
+        "valor": 4,
+    },
+    "carne_caprina": {
+        "nome": "Carne caprina",
+        "emoji": "🥩",
+        "unidade": "kg",
+        "valor": 4,
+    },
+}

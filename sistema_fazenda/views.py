@@ -35,6 +35,10 @@ from sistema_fazenda.funcionarios.views import FuncionariosView
 from sistema_fazenda.animais.embeds import criar_embed_resumo_fazenda
 from sistema_fazenda.animais.views import EntregaRacaoView, IrParaAnimaisView
 
+
+from sistema_fazenda.animais.config import ANIMAIS, ANIMAIS_COMPRAVEIS
+from sistema_fazenda.animais.services import comprar_animal, abater_animal
+
 from sistema_fazenda.animais.embeds import (
     criar_embed_resumo_fazenda,
     criar_embed_entrega_racao,
@@ -387,9 +391,238 @@ class VenderFornecedorSelect(Select):
         )
 
 
+class ComprarAnimalSelect(Select):
+    def __init__(self):
+        options = []
+
+        for animal_id in ANIMAIS_COMPRAVEIS:
+            animal = ANIMAIS[animal_id]
+            preco_unidade = animal["preco_compra"]
+            preco_casal = preco_unidade * 2
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"{animal['nome']} unidade",
+                    value=f"{animal_id}:1",
+                    description=f"Comprar 1 por {preco_unidade} moedas rurais",
+                    emoji=animal.get("emoji") or "🐾",
+                )
+            )
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"Casal de {animal['nome']}",
+                    value=f"{animal_id}:2",
+                    description=f"Comprar 2 por {preco_casal} moedas rurais",
+                    emoji=animal.get("emoji") or "🐾",
+                )
+            )
+
+        super().__init__(
+            placeholder="Comprar animais",
+            min_values=1,
+            max_values=1,
+            options=options[:25],
+        )
+
+    async def callback(self, interaction: nextcord.Interaction):
+        animal_id, quantidade_txt = self.values[0].split(":")
+        quantidade = int(quantidade_txt)
+
+        ok, msg = comprar_animal(animal_id, quantidade)
+
+        await atualizar_painel_farmhouse(interaction.client)
+
+        await resposta_temporaria(
+            interaction,
+            criar_embed_resultado("Compra de animais", msg, ok),
+            5,
+        )
+
+
+class AbaterAnimalSelect(Select):
+    def __init__(self):
+        data = get_state()
+        options = []
+
+        for animal_id in ANIMAIS_COMPRAVEIS:
+            animal = ANIMAIS[animal_id]
+            quantidade = len(data.get("animais", {}).get(animal_id, []))
+
+            if quantidade <= 0:
+                continue
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"Abater 1 {animal['nome']}",
+                    value=f"{animal_id}:1",
+                    description=f"Disponível: {quantidade}",
+                    emoji=animal.get("emoji") or "🥩",
+                )
+            )
+
+        if not options:
+            options = [
+                nextcord.SelectOption(
+                    label="Nenhum animal disponível",
+                    value="none",
+                    description="Compre animais no fornecedor primeiro.",
+                    emoji="❌",
+                )
+            ]
+
+        super().__init__(
+            placeholder="Escolha um animal para abater",
+            min_values=1,
+            max_values=1,
+            options=options[:25],
+        )
+
+    async def callback(self, interaction: nextcord.Interaction):
+        if self.values[0] == "none":
+            await mensagem_temporaria(
+                interaction,
+                "❌ Nenhum animal disponível para abate.",
+                5,
+            )
+            return
+
+        animal_id, quantidade_txt = self.values[0].split(":")
+        quantidade = int(quantidade_txt)
+
+        ok, msg = abater_animal(animal_id, quantidade)
+
+        await atualizar_painel_farmhouse(interaction.client)
+
+        await resposta_temporaria(
+            interaction,
+            criar_embed_resultado("Abate de animais", msg, ok),
+            5,
+        )
+
+
+class ComprarAnimalSelect(Select):
+    def __init__(self):
+        options = []
+
+        for animal_id in ANIMAIS_COMPRAVEIS:
+            animal = ANIMAIS[animal_id]
+            preco_unidade = animal["preco_compra"]
+            preco_casal = preco_unidade * 2
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"{animal['nome']} unidade",
+                    value=f"{animal_id}:1",
+                    description=f"Comprar 1 por {preco_unidade} moedas rurais",
+                    emoji=animal.get("emoji") or "🐾",
+                )
+            )
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"Casal de {animal['nome']}",
+                    value=f"{animal_id}:2",
+                    description=f"Comprar 2 por {preco_casal} moedas rurais",
+                    emoji=animal.get("emoji") or "🐾",
+                )
+            )
+
+        super().__init__(
+            placeholder="Comprar animais",
+            min_values=1,
+            max_values=1,
+            options=options[:25],
+        )
+
+    async def callback(self, interaction: nextcord.Interaction):
+        animal_id, quantidade_txt = self.values[0].split(":")
+        quantidade = int(quantidade_txt)
+
+        ok, msg = comprar_animal(animal_id, quantidade)
+
+        await atualizar_painel_farmhouse(interaction.client)
+
+        await resposta_temporaria(
+            interaction,
+            criar_embed_resultado("Compra de animais", msg, ok),
+            5,
+        )
+
+
+class AbaterAnimalSelect(Select):
+    def __init__(self):
+        data = get_state()
+        options = []
+
+        for animal_id in ANIMAIS_COMPRAVEIS:
+            animal = ANIMAIS[animal_id]
+            quantidade = len(data.get("animais", {}).get(animal_id, []))
+
+            if quantidade <= 0:
+                continue
+
+            options.append(
+                nextcord.SelectOption(
+                    label=f"Abater 1 {animal['nome']}",
+                    value=f"{animal_id}:1",
+                    description=f"Disponível: {quantidade}",
+                    emoji=animal.get("emoji") or "🥩",
+                )
+            )
+
+        if not options:
+            options = [
+                nextcord.SelectOption(
+                    label="Nenhum animal disponível",
+                    value="none",
+                    description="Compre animais no fornecedor primeiro.",
+                    emoji="❌",
+                )
+            ]
+
+        super().__init__(
+            placeholder="Escolha um animal para abater",
+            min_values=1,
+            max_values=1,
+            options=options[:25],
+        )
+
+    async def callback(self, interaction: nextcord.Interaction):
+        if self.values[0] == "none":
+            await mensagem_temporaria(
+                interaction,
+                "❌ Nenhum animal disponível para abate.",
+                5,
+            )
+            return
+
+        animal_id, quantidade_txt = self.values[0].split(":")
+        quantidade = int(quantidade_txt)
+
+        ok, msg = abater_animal(animal_id, quantidade)
+
+        await atualizar_painel_farmhouse(interaction.client)
+
+        await resposta_temporaria(
+            interaction,
+            criar_embed_resultado("Abate de animais", msg, ok),
+            5,
+        )
+
+
+class AbaterAnimalView(View):
+    def __init__(self):
+        super().__init__(timeout=180)
+        self.add_item(AbaterAnimalSelect())
+
+
 class ConfirmarVendaFornecedorView(View):
     def __init__(self, cultivo_id: str):
         super().__init__(timeout=120)
+        self.add_item(ComprarSementeSelect())
+        self.add_item(ComprarAnimalSelect())
+        self.add_item(VenderFornecedorSelect())
         self.cultivo_id = cultivo_id
 
     @nextcord.ui.button(
@@ -560,13 +793,6 @@ class VoltarFazendaView(View):
             embed=criar_embed_relatorio_estoque(),
             ephemeral=True,
         )
-
-        await asyncio.sleep(10)
-
-        try:
-            await interaction.delete_original_message()
-        except Exception:
-            pass
 
     @nextcord.ui.button(
         label="Voltar para fazenda",

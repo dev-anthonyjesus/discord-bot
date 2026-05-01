@@ -3,12 +3,14 @@ from datetime import datetime, timezone
 from sistema_fazenda.db import get_state, salvar_state
 from sistema_fazenda.animais.config import (
     ANIMAIS,
+    ABATE_ANIMAIS,
     RACAO_MAXIMA,
     RACAO_INICIAL,
     CUSTO_ENTREGA_RACAO,
     VALOR_ENTREGA_RACAO,
+    ANIMAIS_COMPRAVEIS,
+    PRODUTOS_ANIMAIS,
 )
-
 
 def agora_ts() -> float:
     return datetime.now(timezone.utc).timestamp()
@@ -303,3 +305,64 @@ def marcar_animais_prontos() -> dict:
 
     salvar_state(data)
     return data
+
+
+
+
+def abater_animal(animal_id: str, quantidade: int = 1) -> tuple[bool, str]:
+    data = get_state()
+    data = garantir_bloco_animais(data)
+
+    if animal_id not in ABATE_ANIMAIS:
+        return False, "❌ Esse animal não pode ser abatido."
+
+    quantidade = max(1, int(quantidade))
+    animais = data["animais"].get(animal_id, [])
+
+    if len(animais) < quantidade:
+        return False, f"❌ Você não tem {quantidade} animal(is) desse tipo para abater."
+
+    regra = ABATE_ANIMAIS[animal_id]
+    cfg = ANIMAIS[animal_id]
+
+    kg_total = regra["kg"] * quantidade
+    valor_total = kg_total * regra["valor_por_kg"]
+
+    for _ in range(quantidade):
+        animais.pop(0)
+
+    produtos = data["animais"].setdefault("produtos", {})
+    produto_id = regra["produto"]
+    produtos[produto_id] = produtos.get(produto_id, 0) + kg_total
+
+    data["animais"]["estatisticas"]["carne_vendida"] += kg_total
+
+    salvar_state(data)
+
+    return (
+        True,
+        f"🥩 Abate realizado: {quantidade}x {cfg['nome']} virou "
+        f"`{kg_total}kg` de {regra['nome']}.\n"
+        f"Valor estimado: `{valor_total}` moedas rurais.",
+    )
+
+
+def formatar_produtos_animais_para_embed(data: dict) -> str:
+    data = garantir_bloco_animais(data)
+    produtos = data["animais"].get("produtos", {})
+
+    if not produtos:
+        return "_vazio_"
+
+    linhas = []
+
+    for produto_id, quantidade in produtos.items():
+        cfg = PRODUTOS_ANIMAIS.get(produto_id)
+
+        if not cfg:
+            linhas.append(f"{produto_id}: `{quantidade}`")
+            continue
+
+        linhas.append(f"{cfg['emoji']} {cfg['nome']}: `{quantidade}{cfg['unidade']}`")
+
+    return "\n".join(linhas)

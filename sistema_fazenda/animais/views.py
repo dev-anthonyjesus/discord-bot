@@ -60,6 +60,20 @@ class LocalAnimaisView(View):
             embed=criar_embed_resultado("Produção animal", msg, ok),
             ephemeral=True,
         )
+        
+    @nextcord.ui.button(
+        label="Abater animal",
+        style=nextcord.ButtonStyle.red,
+        emoji="🥩",
+    )
+    async def abater(self, button: Button, interaction: nextcord.Interaction):
+        from sistema_fazenda.views import AbaterAnimalView
+
+        await interaction.response.send_message(
+            "Escolha o animal para abater:",
+            view=AbaterAnimalView(),
+            ephemeral=True,
+    )     
 
 
 class IrParaAnimaisSelect(Select):
