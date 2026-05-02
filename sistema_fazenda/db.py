@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-
+import random 
 from sistema_fazenda.config import (
     FAZENDA_FILE,
     ENERGIA_INICIAL,
@@ -13,6 +13,7 @@ from sistema_fazenda.config import (
     CANTEIROS_POR_LOTE,
     SLOTS_POR_CANTEIRO,
     LOTES_DESBLOQUEADOS_INICIAIS,
+    ANIMAIS_COMPRAVEIS,
 )
 
 
@@ -102,6 +103,7 @@ def estado_inicial() -> dict:
             "moedas_gastas": 0,
         },
         "criado_em": datetime.now().isoformat(timespec="seconds"),
+        "fornecedor_animais": {},  # estoque diário de animais à venda
         "atualizado_em": datetime.now().isoformat(timespec="seconds"),
     }
 
@@ -210,3 +212,18 @@ def marcar_tudo_pronto() -> dict:
 
     save_db(data)
     return data
+
+
+
+def gerar_estoque_fornecedor_animais() -> dict:
+    estoque = {}
+    for animal_id in ANIMAIS_COMPRAVEIS:
+        # Gera de 0 a 3 unidades de cada animal, por exemplo.
+        estoque[animal_id] = random.randint(0, 8)
+    return estoque
+
+
+def iniciar_novo_dia():
+    data = get_state()
+    data["fornecedor_animais"] = gerar_estoque_fornecedor_animais()
+    salvar_state(data)

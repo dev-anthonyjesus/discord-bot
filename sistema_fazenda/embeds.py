@@ -1,11 +1,14 @@
 import nextcord
+from nextcord.ui import Modal, TextInput, Button, View, Select
 
 
 from sistema_fazenda.animais.services import (
     resumo_animais_para_embed,
     resumo_racao_para_embed,
+    comprar_animal_fornecedor,
 )
 from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
+from sistema_fazenda.animais.config import ANIMAIS, ANIMAIS_COMPRAVEIS
 
 
 from sistema_fazenda.config import CULTIVOS, ESTACOES, NOME_FAZENDA, SLOTS_POR_CANTEIRO
@@ -384,18 +387,46 @@ def criar_embed_estoque() -> nextcord.Embed:
 
 
 def criar_embed_fornecedor() -> nextcord.Embed:
+    data = get_state()
+    estoque_animais = data.get("fornecedor_animais", {})
+
     embed = nextcord.Embed(
-        title=f"{E('loja')} Fornecedor Rural",
+        title="Fornecedor",
         description=(
-            "O fornecedor vende sementes e compra produtos na hora.\n\n"
-            "Ele fica com `10%` do valor como taxa de revenda. "
-            "O dinheiro cai imediatamente."
+            "Compre sementes e animais, ou venda seus produtos para o fornecedor.\n"
+            "Os estoques de animais são limitados e renovados diariamente."
         ),
-        color=0xBAFF7C,
-        timestamp=nextcord.utils.utcnow(),
+        color=nextcord.Color.gold(),
     )
 
-    embed.set_footer(text="Farmhouse • fornecedor")
+    # Listar sementes (como já faz atualmente)
+    sementes = []
+    for cultivo_id, cultivo in CULTIVOS.items():
+        sementes.append(f"{cultivo['nome']}: {cultivo['custo_moedas']} moedas")
+    embed.add_field(name="Sementes à venda", value="\n".join(sementes), inline=False)
+
+    # Listar animais disponíveis com quantidade e preço
+    linhas_animais = []
+    for animal_id, qtd in estoque_animais.items():
+        if qtd <= 0:
+            continue
+        animal_cfg = ANIMAIS[animal_id]
+        preco = animal_cfg["preco_compra"]
+        linhas_animais.append(
+            f"{animal_cfg['nome']}: {qtd} disponível(is) • {preco} moedas cada"
+        )
+
+    if linhas_animais:
+        embed.add_field(
+            name="Animais à venda (estoque de hoje)",
+            value="\n".join(linhas_animais),
+            inline=False,
+        )
+    else:
+        embed.add_field(
+            name="Animais à venda (estoque de hoje)", value="_Esgotado_", inline=False
+        )
+
     return embed
 
 
@@ -503,3 +534,67 @@ def criar_embed_relatorio_estoque() -> nextcord.Embed:
 
     embed.set_footer(text="Farmhouse • relatório do estoque")
     return embed
+
+
+
+
+class ModalComprarAnimal(Modal):
+    def __init__(self):
+        super().__init__("Comprar animais")
+        # Campo para escolher animal
+        self.animal_select = Select(
+            placeholder="Escolha o animal",
+            min_values=1,
+            max_values=1,
+            options=[
+                nextcord.SelectOption(label=ANIMAIS[a]["nome"], value=a)
+                for a in ANIMAIS_COMPRAVEIS
+            ],
+        )
+        # Campo para digitar quantidade
+        self.quantidade_input = TextInput(
+            label="Quantidade",
+            placeholder="Digite um número inteiro",
+            min_length=1,
+            max_length=4,
+        )
+        self.add_item(self.animal_select)
+        self.add_item(self.quantidade_input)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        animal_id = self.animal_select.values[0]
+        try:
+            quantidade = int(self.quantidade_input.value)
+        except ValueError:
+            await interaction.response.send_message(
+                "❌ Quantidade inválida.", ephemeral=True
+            )
+            return
+
+        ok, msg = comprar_animal_fornecedor(animal_id, quantidade)
+        await atualizar_painel_farmhouse(interaction.client)
+        await interaction.response.send_message(msg, ephemeral=True)
+
+
+class FornecedorView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.add_item(ComprarSementeSelect())
+        # Botão para abrir o modal
+        self.add_item(
+            Button(
+                label="Comprar animal",
+                style=nextcord.ButtonStyle.green,
+                custom_id="abrir_modal_animal",
+            )
+        )
+
+    @nextcord.ui.button(
+        label="Comprar animal",
+        style=nextcord.ButtonStyle.green,
+        emoji="🐾",
+        custom_id="abrir_modal_animal",
+    )
+    async def comprar_animal(self, button: Button, interaction: nextcord.Interaction):
+        # abre o modal
+        await interaction.response.send_modal(ModalComprarAnimal())

@@ -307,8 +307,6 @@ def marcar_animais_prontos() -> dict:
     return data
 
 
-
-
 def abater_animal(animal_id: str, quantidade: int = 1) -> tuple[bool, str]:
     data = get_state()
     data = garantir_bloco_animais(data)
@@ -366,3 +364,45 @@ def formatar_produtos_animais_para_embed(data: dict) -> str:
         linhas.append(f"{cfg['emoji']} {cfg['nome']}: `{quantidade}{cfg['unidade']}`")
 
     return "\n".join(linhas)
+
+
+def comprar_animal_fornecedor(animal_id: str, quantidade: int) -> tuple[bool, str]:
+    data = get_state()
+    data = garantir_bloco_animais(data)
+    estoque = data.get("fornecedor_animais", {})
+    moedas = data.get("moedas", 0)
+
+    # Verifica estoque
+    if estoque.get(animal_id, 0) < quantidade:
+        return (
+            False,
+            f"❌ Estoque insuficiente: só há {estoque.get(animal_id, 0)} disponível(is) hoje.",
+        )
+
+    preco_unitario = ANIMAIS[animal_id]["preco_compra"]
+    total = preco_unitario * quantidade
+
+    # Verifica saldo do jogador
+    if moedas < total:
+        return (
+            False,
+            f"❌ Você não tem moedas suficientes. Custo: {total}, saldo: {moedas}.",
+        )
+
+    # Efetiva compra
+    data["moedas"] -= total
+    estoque[animal_id] -= quantidade
+
+    for _ in range(quantidade):
+        data["animais"].setdefault(animal_id, []).append(
+            {
+                "ultimo_produto": agora_ts(),
+                "ultima_procriacao": agora_ts(),
+            }
+        )
+
+    salvar_state(data)
+    return (
+        True,
+        f"✅ Compra concluída! Você comprou {quantidade} {ANIMAIS[animal_id]['nome']} por {total} moedas.",
+    )
