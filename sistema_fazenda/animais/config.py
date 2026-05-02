@@ -177,3 +177,11 @@ PRODUTOS_ANIMAIS = {
         "valor": 4,
     },
 }
+
+
+ANIMAIS_COMPRAVEIS = {
+    "galinha": True,
+    "vaca": True,
+    "ovelha": True,
+    "cabra": True,
+}

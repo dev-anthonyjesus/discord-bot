@@ -117,16 +117,25 @@ def formatar_lista_itens(itens: dict) -> str:
         return "_vazio_"
 
     linhas = []
-
     for cultivo_id, quantidade in itens.items():
         cultivo = CULTIVOS.get(cultivo_id)
-
         if not cultivo:
             continue
+        linhas.append(f"{cultivo['nome']}: `{formatar_quantidade_cultivo(quantidade)}`")
+    return "\n".join(linhas)
 
-        linhas.append(f"{cultivo['nome']}: `{quantidade}`")
 
-    return "\n".join(linhas) if linhas else "_vazio_"
+def formatar_lista_itens(itens: dict) -> str:
+    if not itens:
+        return "_vazio_"
+
+    linhas = []
+    for cultivo_id, quantidade in itens.items():
+        cultivo = CULTIVOS.get(cultivo_id)
+        if not cultivo:
+            continue
+        linhas.append(f"{cultivo['nome']}: `{formatar_quantidade_cultivo(quantidade)}`")
+    return "\n".join(linhas)
 
 
 def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed:
