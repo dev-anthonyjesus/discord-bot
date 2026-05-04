@@ -1,0 +1,16 @@
+node_modules/
+out/
+coverage/
+temp/
+build/
+application.log
+.DS_Store
+/*.env
+logfile.log
+uncaughtExceptions.log
+.vscode
+src/*.json
+.idea
+test.ts
+notes.md
+.nvmrc

@@ -1,14 +1,11 @@
 import nextcord
-from nextcord.ui import Modal, TextInput, Button, View, Select
 
 
 from sistema_fazenda.animais.services import (
     resumo_animais_para_embed,
     resumo_racao_para_embed,
-    comprar_animal_fornecedor,
 )
 from sistema_fazenda.funcionarios.services import resumo_funcionarios_para_embed
-from sistema_fazenda.animais.config import ANIMAIS, ANIMAIS_COMPRAVEIS
 
 
 from sistema_fazenda.config import CULTIVOS, ESTACOES, NOME_FAZENDA, SLOTS_POR_CANTEIRO
@@ -19,7 +16,6 @@ from sistema_fazenda.services import (
     formatar_tempo,
     slot_pronto,
 )
-
 
 CARGO_BRACO_DIREITO_ID = 1499469992264204298
 CARGO_SECRETARIA_ID = 1499470168747806750
@@ -115,30 +111,49 @@ def formatar_canteiro_detalhado(canteiro: dict) -> str:
     return ansi("\n".join(linhas))
 
 
+def formatar_quantidade_cultivo(quantidade: int) -> str:
+    """Formata uma quantidade de cultivo em unidades ou lotes.
+
+    Esta função converte uma quantidade bruta de itens em uma
+    representação mais amigável. Se a quantidade for maior ou igual
+    a 100 unidades, ela será convertida em lotes de 100. Exemplo:
+
+    * 99 → "99 un"
+    * 100 → "1 lote"
+    * 250 → "2 lote + 50 un"
+
+    O termo "lote" é usado no singular mesmo para valores maiores
+    para simplificar a exibição.
+    """
+    quantidade = int(quantidade)
+    if quantidade >= 100:
+        lotes = quantidade // 100
+        resto = quantidade % 100
+        if resto > 0:
+            return f"{lotes} lote + {resto} un"
+        return f"{lotes} lote"
+    return f"{quantidade} un"
+
+
 def formatar_lista_itens(itens: dict) -> str:
+    """Formata um dicionário de itens para exibição.
+
+    Percorre os itens (identificados por IDs de cultivo) e utiliza
+    ``formatar_quantidade_cultivo`` para converter a quantidade em
+    uma string amigável que pode incluir lotes. Caso o item não esteja
+    definido em ``CULTIVOS``, é ignorado. Retorna ``_vazio_`` se
+    nenhum item válido for encontrado.
+    """
     if not itens:
         return "_vazio_"
 
-    linhas = []
+    linhas: list[str] = []
     for cultivo_id, quantidade in itens.items():
         cultivo = CULTIVOS.get(cultivo_id)
         if not cultivo:
             continue
         linhas.append(f"{cultivo['nome']}: `{formatar_quantidade_cultivo(quantidade)}`")
-    return "\n".join(linhas)
-
-
-def formatar_lista_itens(itens: dict) -> str:
-    if not itens:
-        return "_vazio_"
-
-    linhas = []
-    for cultivo_id, quantidade in itens.items():
-        cultivo = CULTIVOS.get(cultivo_id)
-        if not cultivo:
-            continue
-        linhas.append(f"{cultivo['nome']}: `{formatar_quantidade_cultivo(quantidade)}`")
-    return "\n".join(linhas)
+    return "\n".join(linhas) if linhas else "_vazio_"
 
 
 def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed:
@@ -156,13 +171,11 @@ def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed
         timestamp=nextcord.utils.utcnow(),
     )
 
-    lotes_txt = []
-
+    lotes_txt: list[str] = []
     for lote in data["lotes"]:
         lotes_txt.append(f"**Lote {lote['id']}** — {resumo_lote(lote)}")
 
-
-
+    # Aliados da fazenda
     embed.add_field(
         name=f"{E('info')} Aliados da Fazenda",
         value=(
@@ -173,43 +186,42 @@ def criar_embed_farmhouse(guild: nextcord.Guild | None = None) -> nextcord.Embed
         ),
         inline=False,
     )
-
+    # Lotes
     embed.add_field(
         name=f"{E('lote')} Lotes",
         value="\n".join(lotes_txt),
         inline=False,
     )
-
+    # Animais
+    embed.add_field(
+        name="Animais",
+        value=resumo_animais_para_embed(data),
+        inline=False,
+    )
+    # Ração
+    embed.add_field(
+        name="Ração",
+        value=resumo_racao_para_embed(data),
+        inline=False,
+    )
+    # Sementes
     embed.add_field(
         name="Sementes",
         value=formatar_lista_itens(data.get("sementes", {})),
         inline=True,
     )
-
+    # Estoque
     embed.add_field(
         name=f"{E('celeiro')} Estoque",
         value=formatar_lista_itens(data.get("celeiro", {})),
         inline=True,
     )
-        
+    # Funcionários
     embed.add_field(
         name="Funcionários da Fazenda",
         value=resumo_funcionarios_para_embed(data),
         inline=True,
     )
-
-    embed.add_field(
-    name="Animais",
-    value=resumo_animais_para_embed(data),
-    inline=False,
-    )
-
-    embed.add_field(
-    name="Ração",
-    value=resumo_racao_para_embed(data),
-    inline=False,
-    )
-
     embed.set_footer(text="Farmhouse • plantação v1")
     return embed
 
@@ -263,7 +275,6 @@ def criar_embed_cangaco() -> nextcord.Embed:
         color=0xFFB347,
         timestamp=nextcord.utils.utcnow(),
     )
-
     embed.set_footer(text="Farmhouse • cangaço e eventos")
     return embed
 
@@ -290,7 +301,6 @@ def criar_embed_prefeitura() -> nextcord.Embed:
         ),
         inline=False,
     )
-
     embed.set_footer(text="Farmhouse • prefeitura rural")
     return embed
 
@@ -343,7 +353,6 @@ def criar_embed_resultado(
         color=0x2ECC71 if sucesso else 0xE74C3C,
         timestamp=nextcord.utils.utcnow(),
     )
-
     embed.set_footer(text="Farmhouse")
     return embed
 
@@ -357,76 +366,42 @@ def criar_embed_estoque() -> nextcord.Embed:
         color=0xBAFF7C,
         timestamp=nextcord.utils.utcnow(),
     )
-
     embed.add_field(
         name="Sementes",
         value=formatar_lista_itens(data.get("sementes", {})),
         inline=False,
     )
-
     embed.add_field(
         name=f"{E('celeiro')} Produtos in natura",
         value=formatar_lista_itens(data.get("celeiro", {})),
         inline=False,
     )
-
     embed.add_field(
         name="Produtos processados",
         value=formatar_lista_itens(data.get("processados", {})),
         inline=False,
     )
-
     embed.add_field(
         name="Animais",
         value="_em breve_",
         inline=False,
     )
-
     embed.set_footer(text="Farmhouse • estoque")
     return embed
 
 
 def criar_embed_fornecedor() -> nextcord.Embed:
-    data = get_state()
-    estoque_animais = data.get("fornecedor_animais", {})
-
     embed = nextcord.Embed(
-        title="Fornecedor",
+        title=f"{E('loja')} Fornecedor Rural",
         description=(
-            "Compre sementes e animais, ou venda seus produtos para o fornecedor.\n"
-            "Os estoques de animais são limitados e renovados diariamente."
+            "O fornecedor vende sementes e compra produtos na hora.\n\n"
+            "Ele fica com `10%` do valor como taxa de revenda. "
+            "O dinheiro cai imediatamente."
         ),
-        color=nextcord.Color.gold(),
+        color=0xBAFF7C,
+        timestamp=nextcord.utils.utcnow(),
     )
-
-    # Listar sementes (como já faz atualmente)
-    sementes = []
-    for cultivo_id, cultivo in CULTIVOS.items():
-        sementes.append(f"{cultivo['nome']}: {cultivo['custo_moedas']} moedas")
-    embed.add_field(name="Sementes à venda", value="\n".join(sementes), inline=False)
-
-    # Listar animais disponíveis com quantidade e preço
-    linhas_animais = []
-    for animal_id, qtd in estoque_animais.items():
-        if qtd <= 0:
-            continue
-        animal_cfg = ANIMAIS[animal_id]
-        preco = animal_cfg["preco_compra"]
-        linhas_animais.append(
-            f"{animal_cfg['nome']}: {qtd} disponível(is) • {preco} moedas cada"
-        )
-
-    if linhas_animais:
-        embed.add_field(
-            name="Animais à venda (estoque de hoje)",
-            value="\n".join(linhas_animais),
-            inline=False,
-        )
-    else:
-        embed.add_field(
-            name="Animais à venda (estoque de hoje)", value="_Esgotado_", inline=False
-        )
-
+    embed.set_footer(text="Farmhouse • fornecedor")
     return embed
 
 
@@ -440,7 +415,6 @@ def criar_embed_feira() -> nextcord.Embed:
         color=0xFFB347,
         timestamp=nextcord.utils.utcnow(),
     )
-
     embed.set_footer(text="Farmhouse • feira")
     return embed
 
@@ -458,7 +432,6 @@ def criar_embed_confirmar_venda_fornecedor(dados: dict) -> nextcord.Embed:
         color=0xBAFF7C,
         timestamp=nextcord.utils.utcnow(),
     )
-
     embed.set_footer(text="Farmhouse • confirmação de venda")
     return embed
 
@@ -476,23 +449,18 @@ def criar_embed_relatorio_estoque() -> nextcord.Embed:
         color=0xBAFF7C,
         timestamp=nextcord.utils.utcnow(),
     )
-
     tem_algo = False
 
     for cultivo_id, cultivo in CULTIVOS.items():
         sementes = data.get("sementes", {}).get(cultivo_id, 0)
         quantidade = data.get("celeiro", {}).get(cultivo_id, 0)
-
         if sementes <= 0 and quantidade <= 0:
             continue
-
         tem_algo = True
-
         valor_bruto = cultivo["valor_venda"] * quantidade
         taxa_fornecedor = int(valor_bruto * 0.10)
         valor_fornecedor = valor_bruto - taxa_fornecedor
         valor_feira = int(valor_bruto * 1.20)
-
         embed.add_field(
             name=f"{cultivo['nome']}",
             value=(
@@ -506,14 +474,12 @@ def criar_embed_relatorio_estoque() -> nextcord.Embed:
             ),
             inline=False,
         )
-
     if not tem_algo:
         embed.add_field(
             name="Estoque vazio",
             value="Ainda não há sementes ou produtos para analisar.",
             inline=False,
         )
-
     embed.add_field(
         name="Produtos processados",
         value=(
@@ -522,7 +488,6 @@ def criar_embed_relatorio_estoque() -> nextcord.Embed:
         ),
         inline=False,
     )
-
     embed.add_field(
         name="Animais",
         value=(
@@ -531,70 +496,5 @@ def criar_embed_relatorio_estoque() -> nextcord.Embed:
         ),
         inline=False,
     )
-
     embed.set_footer(text="Farmhouse • relatório do estoque")
     return embed
-
-
-
-
-class ModalComprarAnimal(Modal):
-    def __init__(self):
-        super().__init__("Comprar animais")
-        # Campo para escolher animal
-        self.animal_select = Select(
-            placeholder="Escolha o animal",
-            min_values=1,
-            max_values=1,
-            options=[
-                nextcord.SelectOption(label=ANIMAIS[a]["nome"], value=a)
-                for a in ANIMAIS_COMPRAVEIS
-            ],
-        )
-        # Campo para digitar quantidade
-        self.quantidade_input = TextInput(
-            label="Quantidade",
-            placeholder="Digite um número inteiro",
-            min_length=1,
-            max_length=4,
-        )
-        self.add_item(self.animal_select)
-        self.add_item(self.quantidade_input)
-
-    async def callback(self, interaction: nextcord.Interaction):
-        animal_id = self.animal_select.values[0]
-        try:
-            quantidade = int(self.quantidade_input.value)
-        except ValueError:
-            await interaction.response.send_message(
-                "❌ Quantidade inválida.", ephemeral=True
-            )
-            return
-
-        ok, msg = comprar_animal_fornecedor(animal_id, quantidade)
-        await atualizar_painel_farmhouse(interaction.client)
-        await interaction.response.send_message(msg, ephemeral=True)
-
-
-class FornecedorView(View):
-    def __init__(self):
-        super().__init__(timeout=None)
-        self.add_item(ComprarSementeSelect())
-        # Botão para abrir o modal
-        self.add_item(
-            Button(
-                label="Comprar animal",
-                style=nextcord.ButtonStyle.green,
-                custom_id="abrir_modal_animal",
-            )
-        )
-
-    @nextcord.ui.button(
-        label="Comprar animal",
-        style=nextcord.ButtonStyle.green,
-        emoji="🐾",
-        custom_id="abrir_modal_animal",
-    )
-    async def comprar_animal(self, button: Button, interaction: nextcord.Interaction):
-        # abre o modal
-        await interaction.response.send_modal(ModalComprarAnimal())
